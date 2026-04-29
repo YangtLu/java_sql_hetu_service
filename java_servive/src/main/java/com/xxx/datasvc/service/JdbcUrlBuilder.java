@@ -3,6 +3,7 @@ package com.xxx.datasvc.service;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.sql.Driver;
 import java.util.Properties;
 
 import com.xxx.datasvc.model.DatasourceConfig;
@@ -48,6 +49,7 @@ public class JdbcUrlBuilder {
     }
 
     public static Connection getConnection(DatasourceConfig ds) throws SQLException {
+        registerDriver(ds.getType());
         String url = build(ds);
         String type = ds.getType().toLowerCase();
 
@@ -66,4 +68,35 @@ public class JdbcUrlBuilder {
             return DriverManager.getConnection(url, ds.getUsername(), ds.getPassword());
         }
     }
+
+
+    private static void registerDriver(String type) throws SQLException {
+        if (type == null) {
+            return;
+        }
+
+        String driverClassName;
+        switch (type.toLowerCase()) {
+            case "hetu":
+                driverClassName = "io.hetu.core.jdbc.OpenLooKengDriver";
+                break;
+            case "mysql":
+                driverClassName = "com.mysql.cj.jdbc.Driver";
+                break;
+            case "postgresql":
+                driverClassName = "org.postgresql.Driver";
+                break;
+            default:
+                return;
+        }
+
+        try {
+            Class<?> driverClass = Class.forName(driverClassName);
+            Driver driver = (Driver) driverClass.getDeclaredConstructor().newInstance();
+            DriverManager.registerDriver(driver);
+        } catch (Exception e) {
+            throw new SQLException("加载 JDBC 驱动失败: " + driverClassName, e);
+        }
+    }
+
 }
