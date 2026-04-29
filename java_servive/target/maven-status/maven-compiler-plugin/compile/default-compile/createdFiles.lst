@@ -1,0 +1,7 @@
+com/xxx/datasvc/Application.class
+com/xxx/datasvc/service/JdbcUrlBuilder.class
+com/xxx/datasvc/service/SqlValidator.class
+com/xxx/datasvc/model/QueryRequest.class
+com/xxx/datasvc/controller/DatasourceController.class
+com/xxx/datasvc/model/DatasourceConfig.class
+com/xxx/datasvc/exception/SqlForbiddenException.class
